@@ -9,6 +9,7 @@
 import { Component } from "./core/heropy"; //default가 아닌 이름을 가진 내보내기 방식을 불러올때
 
 import FruitItems from "./components/FruitItems"; //default 가 붙을떄 차이
+import TheHeader from "./components/TheHeader"; //default 가 붙을떄 차이
 
 export default class App extends Component {
   constructor() {
