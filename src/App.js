@@ -8,25 +8,25 @@
 
 import { Component } from "./core/heropy"; //default가 아닌 이름을 가진 내보내기 방식을 불러올때
 
-import FruitItems from "./components/FruitItems"; //default 가 붙을떄 차이
+// import FruitItems from "./components/FruitItems"; //default 가 붙을떄 차이
 import TheHeader from "./components/TheHeader"; //default 가 붙을떄 차이
 
 export default class App extends Component {
-  constructor() {
-    super({
-      state: {
-        inputText: '' ,// 빈 문자 데이터를 만듬.
+  // constructor() {
+  //   super({
+  //     state: {
+  //       inputText: '' ,// 빈 문자 데이터를 만듬.
         
-        fruits: [
-          {name : 'apple', price : 1000},
-          {name : 'banana', price : 2000},
-          {name : 'cherry', price : 3000}
-        ]
-      }
-    }
+  //       fruits: [
+  //         {name : 'apple', price : 1000},
+  //         {name : 'banana', price : 2000},
+  //         {name : 'cherry', price : 3000}
+  //       ]
+  //     }
+  //   }
 
-    ) // 가져오는 함수를 실행하기위해서 꼭 사용해야함! (기본)
-  }
+  //   ) // 가져오는 함수를 실행하기위해서 꼭 사용해야함! (기본)
+  // } 변경사항 없을땐 생략가능!!
 
   render() {
     // 재정의
@@ -47,31 +47,36 @@ export default class App extends Component {
     //   console.log(this.state.inputText)
     // })
 
-    console.log(this.state.fruits)
+    // console.log(this.state.fruits)
 
-    this.el.innerHTML = /* HTML */ `
-      <h1>fruits</h1>
-      <ul>
-        <!-- ${this.state.fruits
-        .filter(fruit => {
-          return fruit.price < 3000
-        })
-        .map(fruit => `<li>${fruit.name}</li>`)
-        .join('')} -->
-      </ul>
+    // this.el.innerHTML = /* HTML */ `
+    //   <h1>fruits</h1>
+    //   <ul>
+    //     <!-- ${this.state.fruits
+    //     .filter(fruit => {
+    //       return fruit.price < 3000
+    //     })
+    //     .map(fruit => `<li>${fruit.name}</li>`)
+    //     .join('')} -->
+    //   </ul>
 
-    `
+    // `
 
-    const ulEl = this.el.querySelector('ul')
-    ulEl.append( ...this.state.fruits
-      .filter(fruit => fruit.price < 3000)
-      .map(fruit => new FruitItems(
-        {
-          props: {
-            name: fruit.name,
-            price:fruit.price
-        }
-      }
-    ).el)) //생성자 로 호출함.
+    // const ulEl = this.el.querySelector('ul')
+    // ulEl.append( ...this.state.fruits
+    //   .filter(fruit => fruit.price < 3000)
+    //   .map(fruit => new FruitItems(
+    //     {
+    //       props: {
+    //         name: fruit.name,
+    //         price:fruit.price
+    //     }
+    //   }
+    // ).el)) //생성자 로 호출함.
+    const routerView = document.createElement('router-view')
+    this.el.append(
+      new TheHeader().el, // 클래스를 생성자 함수로 호출해서 el이라는 요소를 사용함.
+      routerView
+    )
   }
 }

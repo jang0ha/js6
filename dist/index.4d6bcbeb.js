@@ -560,11 +560,15 @@ function hmrAccept(bundle, id) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _app = require("./App"); //(parcel 번들러는 뒤에 확장자 생략가능)
 var _appDefault = parcelHelpers.interopDefault(_app);
+var _routes = require("./routes"); // router라는 이름을 만듬
+var _routesDefault = parcelHelpers.interopDefault(_routes);
 const root = document.querySelector("#root");
 root.append(new (0, _appDefault.default)().el) //메소드 : App을 생성자 함수로 호출하고 내부에서 el(element)이라는 속성을 쓸거임 인스튼스 생성. == ui componnet개념으로 만들어서 루트에 어팬드할거임.
 ;
+(0, _routesDefault.default)() // import router 호출
+;
 
-},{"./App":"2kQhy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2kQhy":[function(require,module,exports) {
+},{"./App":"2kQhy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./routes":"3L9mC"}],"2kQhy":[function(require,module,exports) {
 // export default class App {
 //   constructor() {
 //     this.el = document.createElement('div') // 메모리에만 생성이 됨.
@@ -574,31 +578,23 @@ root.append(new (0, _appDefault.default)().el) //메소드 : App을 생성자 �
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("./core/heropy"); //default가 아닌 이름을 가진 내보내기 방식을 불러올때
-var _fruitItems = require("./components/FruitItems"); //default 가 붙을떄 차이
-var _fruitItemsDefault = parcelHelpers.interopDefault(_fruitItems);
+// import FruitItems from "./components/FruitItems"; //default 가 붙을떄 차이
+var _theHeader = require("./components/TheHeader"); //default 가 붙을떄 차이
+var _theHeaderDefault = parcelHelpers.interopDefault(_theHeader);
 class App extends (0, _heropy.Component) {
-    constructor(){
-        super({
-            state: {
-                inputText: "",
-                fruits: [
-                    {
-                        name: "apple",
-                        price: 1000
-                    },
-                    {
-                        name: "banana",
-                        price: 2000
-                    },
-                    {
-                        name: "cherry",
-                        price: 3000
-                    }
-                ]
-            }
-        }) // 가져오는 함수를 실행하기위해서 꼭 사용해야함! (기본)
-        ;
-    }
+    // constructor() {
+    //   super({
+    //     state: {
+    //       inputText: '' ,// 빈 문자 데이터를 만듬.
+    //       fruits: [
+    //         {name : 'apple', price : 1000},
+    //         {name : 'banana', price : 2000},
+    //         {name : 'cherry', price : 3000}
+    //       ]
+    //     }
+    //   }
+    //   ) // 가져오는 함수를 실행하기위해서 꼭 사용해야함! (기본)
+    // } 변경사항 없을땐 생략가능!!
     render() {
         // 재정의
         // this.el.classList.add("search")
@@ -614,33 +610,41 @@ class App extends (0, _heropy.Component) {
         // buttonEl.addEventListener('click', () => {
         //   console.log(this.state.inputText)
         // })
-        console.log(this.state.fruits);
-        this.el.innerHTML = /* HTML */ `
-      <h1>fruits</h1>
-      <ul>
-        <!-- ${this.state.fruits.filter((fruit)=>{
-            return fruit.price < 3000;
-        }).map((fruit)=>`<li>${fruit.name}</li>`).join("")} -->
-      </ul>
-
-    `;
-        const ulEl = this.el.querySelector("ul");
-        ulEl.append(...this.state.fruits.filter((fruit)=>fruit.price < 3000).map((fruit)=>new (0, _fruitItemsDefault.default)({
-                props: {
-                    name: fruit.name,
-                    price: fruit.price
-                }
-            }).el)) //생성자 로 호출함.
-        ;
+        // console.log(this.state.fruits)
+        // this.el.innerHTML = /* HTML */ `
+        //   <h1>fruits</h1>
+        //   <ul>
+        //     <!-- ${this.state.fruits
+        //     .filter(fruit => {
+        //       return fruit.price < 3000
+        //     })
+        //     .map(fruit => `<li>${fruit.name}</li>`)
+        //     .join('')} -->
+        //   </ul>
+        // `
+        // const ulEl = this.el.querySelector('ul')
+        // ulEl.append( ...this.state.fruits
+        //   .filter(fruit => fruit.price < 3000)
+        //   .map(fruit => new FruitItems(
+        //     {
+        //       props: {
+        //         name: fruit.name,
+        //         price:fruit.price
+        //     }
+        //   }
+        // ).el)) //생성자 로 호출함.
+        const routerView = document.createElement("router-view");
+        this.el.append(new (0, _theHeaderDefault.default)().el, routerView);
     }
 }
 exports.default = App;
 
-},{"./core/heropy":"57bZf","./components/FruitItems":"cugIu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"57bZf":[function(require,module,exports) {
+},{"./core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./components/TheHeader":"3Cyq4"}],"57bZf":[function(require,module,exports) {
 //////////component//////////
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Component", ()=>Component);
+parcelHelpers.export(exports, "creatRouter", ()=>creatRouter);
 class Component {
     // constructor() {
     //   // 함수 역할
@@ -656,6 +660,37 @@ class Component {
     render() {
     //... 
     }
+}
+//////// router //////////
+function routeRender(routes) {
+    // 주소부분에 해쉬가 붙어있는지 아닌지 확인
+    if (!location.hash) history.replaceState(null, "", "/#/");
+    // 1. route-view를 만들어서
+    const routerView = document.querySelector("router-view");
+    // http://localhost:1234/#/about?name=heropy
+    // #/about?name=heropy
+    const [hash, queryString = ""] = location.hash.split("?");
+    //  4.location.hash로 현재주소 확인 후 > queryString을 제외한 주소hash만 찾아서
+    // 5.주소와 일치한 배열데이터를 [.test()]부분을 찾아서, currentRouter로 할당한 뒤 > 
+    const currentRouter = routes.find((route)=>// 정규 표현식 (객체 RegExp)
+        // /#/about .test('#/about')
+        new RegExp(`${route.path}/?$`).test(hash) //true
+    );
+    // 2. 비운다음에 
+    routerView.innerHTML = "";
+    // 3. 새로운 내용을 넣을건데(아래)
+    // 6. 생성자 함수로 컴포넌트 (클래스)를 호출한다음에 el속성으로 꺼내 내용 넣어라
+    routerView.append(new currentRouter.component().el);
+}
+function creatRouter(routes) {
+    return function() {
+        window.addEventListener("popstate", ()=>{
+            //popstate 주소가 바뀌면 동작
+            routeRender(routes);
+        });
+        routeRender(routes) // popstate는 처음에 동작하지 않기때문에 최초 호출 
+        ;
+    };
 }
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
@@ -688,22 +723,71 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"cugIu":[function(require,module,exports) {
+},{}],"3Cyq4":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
-class FruitItems extends (0, _heropy.Component) {
-    constructor(payload){
+class TheHeader extends (0, _heropy.Component) {
+    constructor(){
         super({
-            tagName: "li",
-            props: payload.props
+            tagName: "header"
         });
     }
     render() {
-        this.el.textContent = this.props.name;
+        this.el.innerHTML = /* html */ `
+      <a href ="#/">Main!</a>
+      <a href ="#/about">about!</a>
+    `;
     }
 }
-exports.default = FruitItems;
+exports.default = TheHeader;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3L9mC":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+var _home = require("./Home");
+var _homeDefault = parcelHelpers.interopDefault(_home);
+var _about = require("./About");
+var _aboutDefault = parcelHelpers.interopDefault(_about);
+// 기본내보내기로 내보냄
+exports.default = (0, _heropy.creatRouter)([
+    // 함수 만듬
+    {
+        path: "#/",
+        componet: (0, _homeDefault.default)
+    },
+    {
+        path: "#/about",
+        componet: (0, _aboutDefault.default)
+    }
+]);
+
+},{"./Home":"0JSNG","./About":"gdB30","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../core/heropy":"57bZf"}],"0JSNG":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class Home extends (0, _heropy.Component) {
+    render() {
+        this.el.innerHTML = /* html */ `
+      <h1>홈홈페이지!</h1>
+    `;
+    }
+}
+exports.default = Home;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gdB30":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class About extends (0, _heropy.Component) {
+    render() {
+        this.el.innerHTML = /* html */ `
+      <h1>어바웃!</h1>
+    `;
+    }
+}
+exports.default = About;
 
 },{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["e11Rl","gLLPy"], "gLLPy", "parcelRequire69fa")
 

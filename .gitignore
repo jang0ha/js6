@@ -64,13 +64,18 @@ desktop.ini
 **/._*
 **/node_modules
 .history
-node_modules
+node_modules/
 package-lock.json
-dist
+dist/
 .publish
 
 # svn #
 #######
 .svn
-dist
-.history
+
+
+# 폴더 무시 #
+dist/
+.history/
+node_modules/
+.parcel-cache
